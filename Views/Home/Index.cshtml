@@ -1,8 +1,39 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Welcome to the Wellness Centre";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-4">
+    <h2 class="mb-3">Welcome to the dtic Wellness Centre</h2>
+    <p>This portal allows clinic staff and patients to manage appointments and personal records.</p>
+
+    <div class="row mt-4 g-3">
+        <div class="col-md-4">
+            <div class="card border-primary h-100">
+                <div class="card-body">
+                    <h5 class="card-title">📋 Patient Registration</h5>
+                    <p class="card-text">Register new patients and manage personal details.</p>
+                    <a asp-controller="Patient" asp-action="Create" class="btn btn-primary">Add Patient</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-success h-100">
+                <div class="card-body">
+                    <h5 class="card-title">📅 Book Appointments</h5>
+                    <p class="card-text">Schedule appointments, choose types and time slots.</p>
+                    <a asp-controller="Appointment" asp-action="Book" class="btn btn-success">Book Appointment</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-info h-100">
+                <div class="card-body">
+                    <h5 class="card-title">🔍 View Records</h5>
+                    <p class="card-text">View, edit or delete existing patients and appointments.</p>
+                    <a asp-controller="Patient" asp-action="Index" class="btn btn-info">Patients</a>
+                    <a asp-controller="Appointment" asp-action="Index" class="btn btn-outline-info ms-2">Appointments</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

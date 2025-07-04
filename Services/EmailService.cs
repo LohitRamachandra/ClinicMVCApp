@@ -16,37 +16,54 @@ namespace ClinicMVCApp.Services
 
         public async Task SendConfirmationEmail(Patient patient, Appointment appointment)
         {
-            var from = _config["EmailSettings:From"];
-            var host = _config["EmailSettings:Host"];
-            var port = int.Parse(_config["EmailSettings:Port"]);
+            var start = appointment.StartTime.Value.ToString(@"hh\:mm");
+            var end = appointment.EndTime.Value.ToString(@"hh\:mm");
+
+
+            var fromAddress = new MailAddress(_config["EmailSettings:From"], _config["EmailSettings:DisplayName"]);
+            var toAddress = new MailAddress(patient.Email);
+            var smtpHost = _config["EmailSettings:Host"];
+            var smtpPort = int.Parse(_config["EmailSettings:Port"]);
             var username = _config["EmailSettings:Username"];
             var password = _config["EmailSettings:Password"];
 
-            using var client = new SmtpClient(host, port)
-            {
-                Credentials = new NetworkCredential(username, password),
-                EnableSsl = true
-            };
+            var subject = "Appointment Confirmation";
+            
 
-            var mail = new MailMessage(new MailAddress(from), new MailAddress(patient.Email))
-            {
-                Subject = "Appointment Confirmation",
-                Body = $@"Dear {patient.FirstName},
+            var body = $@"
+Dear {patient.FirstName},
 
 Your appointment has been successfully booked.
 
 📅 Date: {appointment.Date:yyyy-MM-dd}
-🕘 Time: {appointment.StartTime:hh\\:mm} – {appointment.EndTime:hh\\:mm}
+🕘 Time: {start} – {end}
 🩺 Type: {appointment.AppointmentType}
 📍 Status: {appointment.Status}
 
-Thank you,
-Wellness Centre",
+If you have questions, please contact the clinic.
+
+Kind regards,  
+dtic Clinic Centre Team";
+
+
+
+            using var client = new SmtpClient(smtpHost, smtpPort)
+            {
+                EnableSsl = true,
+                Credentials = new NetworkCredential(username, password)
+            };
+
+            using var message = new MailMessage(fromAddress, toAddress)
+            {
+                Subject = subject,
+                Body = body,
                 IsBodyHtml = false
             };
 
-            await client.SendMailAsync(mail);
+            await client.SendMailAsync(message);
         }
+
+
     }
 
 }

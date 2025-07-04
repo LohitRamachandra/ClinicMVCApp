@@ -16,11 +16,15 @@ namespace ClinicMVCApp.Repositories
 
         public async Task<IEnumerable<Appointment>> GetAllAsync()
         {
-            return await _context.Appointments.ToListAsync();
+            return await _context.Appointments
+                 .Include(a => a.Patient)
+                 .ToListAsync();
         }
         public async Task<Appointment> GetByIdAsync(int id)
         {
-            return await _context.Appointments.FindAsync(id);
+            return await _context.Appointments
+                 .Include(a => a.Patient)
+                 .Where(x => x.Id == id).FirstOrDefaultAsync();
         }
         public async Task AddAsync(Appointment appointment)
         {

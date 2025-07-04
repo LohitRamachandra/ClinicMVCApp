@@ -1,0 +1,45 @@
+﻿@model IEnumerable<ClinicMVCApp.Models.Appointment>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<div class="container mt-4">
+    <h4 class="mb-3">All Appointments</h4>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-light">
+            <tr>
+                <th>Patient</th>
+                <th>Type</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var appt in Model)
+            {
+                <tr>
+                    <td>@appt.Patient?.FirstName @appt.Patient?.Surname</td>
+                    <td>@appt.AppointmentType</td>
+                    <td>@appt.Date.Value.ToString("yyyy-MM-dd")</td>
+                    <td>@appt.StartTime.Value.ToString(@"hh\:mm") – @appt.EndTime.Value.ToString(@"hh\:mm")</td>
+                    <td>
+                        <span class="badge @(appt.Status == "Confirmed" ? "bg-success" : appt.Status == "Pending" ? "bg-warning text-dark" : "bg-secondary")">
+                            @appt.Status
+                        </span>
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@appt.Id" class="btn btn-sm btn-info">View</a>
+                        <a asp-action="Edit" asp-route-id="@appt.Id" class="btn btn-sm btn-warning">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@appt.Id" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="text-end mt-3">
+        <a asp-action="Book" class="btn btn-primary">📅 Book New Appointment</a>
+    </div>
+</div>
+

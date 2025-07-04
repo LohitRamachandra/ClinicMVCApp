@@ -1,7 +1,9 @@
 ﻿using ClinicMVCApp.Interfaces;
 using ClinicMVCApp.Models;
 using ClinicMVCApp.Services;
+using ClinicMVCApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ClinicMVCApp.Controllers
 {
@@ -20,7 +22,7 @@ namespace ClinicMVCApp.Controllers
             _patientRepo = patientRepo;
             _emailService = emailService;
         }
-        public async Task<IActionResult> IndexAsync()
+        public async Task<IActionResult> Index()
         {
             var appointments = await _appointmentRepo.GetAllAsync();
             return appointments != null ?
@@ -31,28 +33,55 @@ namespace ClinicMVCApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Book()
         {
+            var patients = await _patientRepo.GetAllAsync();
+
+            ViewBag.Patients = patients.Select(p => new SelectListItem
+            {
+                Value = p.Id.ToString(),
+                Text = $"{p.FirstName} {p.Surname} (ID: {p.IDNumber})"
+            }).ToList();
+
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Book(Appointment appointment)
+        public async Task<IActionResult> Book(AppointmentViewModel vm)
         {
             if (!ModelState.IsValid)
-                return View(appointment);
+            {
+                var patients = await _patientRepo.GetAllAsync();
+                ViewBag.Patients = patients.Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = $"{p.FirstName} {p.Surname} (ID: {p.IDNumber})"
+                }).ToList();
 
-            appointment.EndTime = appointment.StartTime.Value.Add(TimeSpan.FromMinutes(15));
-            appointment.Status = "Pending";
-            appointment.DateInserted = DateTime.Now;
+                ModelState.AddModelError("", "Please fix the highlighted fields.");
+                return View(vm);
+            }
+
+            var appointment = new Appointment
+            {
+                PatientId = vm.PatientId,
+                AppointmentType = vm.AppointmentType,
+                Date = vm.Date,
+                StartTime = vm.StartTime,
+                EndTime = vm.StartTime.Add(TimeSpan.FromMinutes(15)),
+                Status = "Pending",
+                DateInserted = DateTime.Now
+            };
 
             await _appointmentRepo.AddAsync(appointment);
 
-            var patient = await _patientRepo.GetByIdAsync(appointment.Patient.Id);
-            await _emailService.SendConfirmationEmail(patient, appointment);
+            /*Optional added for email service as well*/
+            //var patient = await _patientRepo.GetByIdAsync(vm.PatientId);
+            //if (patient != null)
+            //    await _emailService.SendConfirmationEmail(patient, appointment);
 
             return RedirectToAction("Confirmation", new { appointmentId = appointment.Id });
         }
 
-
+        [HttpGet]
         public async Task<IActionResult> Confirmation(int appointmentId)
         {
             var appointment = await _appointmentRepo.GetByIdAsync(appointmentId);
@@ -64,9 +93,20 @@ namespace ClinicMVCApp.Controllers
             return View(appointment);
         }
 
-        public async Task<IActionResult> Index()
+        [HttpPost]
+        public async Task<IActionResult> ConfirmAppointment(int appointmentId)
         {
-            return View(await _appointmentRepo.GetAllAsync());
+            var appointment = await _appointmentRepo.GetByIdAsync(appointmentId);
+            if (appointment == null)
+                return RedirectToAction("Book");
+
+            appointment.Status = "Confirmed";
+            appointment.DateModified = DateTime.Now;
+
+            await _appointmentRepo.UpdateAsync(appointment);
+
+            TempData["ConfirmationSuccess"] = "Appointment confirmed successfully!";
+            return RedirectToAction("Confirmation", new { appointmentId });
         }
 
         public async Task<IActionResult> Details(int id)
@@ -82,22 +122,41 @@ namespace ClinicMVCApp.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var appointment = await _appointmentRepo.GetByIdAsync(id);
-            if (appointment == null)
+            if (appointment == null) return NotFound();
+
+            var vm = new AppointmentEditViewModel
             {
-                return NotFound();
-            }
-            return View(appointment);
+                Id = appointment.Id,
+                AppointmentType = appointment.AppointmentType,
+                Date = (DateTime)appointment.Date,
+                StartTime = (TimeSpan)appointment.StartTime,
+                Status = appointment.Status
+            };
+
+            return View(vm);
         }
 
+
+
         [HttpPost]
-        public async Task<IActionResult> Edit(Appointment appointment)
+        public async Task<IActionResult> Edit(AppointmentEditViewModel appointmentVM)
         {
             if (!ModelState.IsValid)
             {
-                return View(appointment);
+                return View(appointmentVM);
             }
 
+            var appointment = await _appointmentRepo.GetByIdAsync(appointmentVM.Id);
+            if (appointment == null) return NotFound();
+
+            // Update only the fields that should be changed
+            appointment.AppointmentType = appointmentVM.AppointmentType;
+            appointment.Date = appointmentVM.Date;
+            appointment.StartTime = appointmentVM.StartTime;
+            appointment.EndTime = appointmentVM.StartTime.Add(TimeSpan.FromMinutes(15));
+            appointment.Status = appointmentVM.Status;
             appointment.DateModified = DateTime.Now;
+
             await _appointmentRepo.UpdateAsync(appointment);
             return RedirectToAction("Index");
         }

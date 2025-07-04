@@ -1,16 +1,27 @@
-﻿@model Appointment
+﻿@model ClinicMVCApp.Models.Appointment
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-<div class="card shadow-lg">
-    <div class="card-header">
-        <h2>Book an Appointment</h2>
-    </div>
-    <div class="card-body">
-        <form asp-action="Book">
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-            <div>
-                <label asp-for="AppointmentType"></label>
-                <select asp-for="AppointmentType" class="form-control">
+<div class="container mt-4">
+    <h4 class="mb-3">BOOK APPOINTMENT</h4>
+    <p>This screen allows the Patient to book an appointment.</p>
+
+    <form asp-action="Book">
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label for="PatientId" class="form-label">Select Patient</label>
+                <select asp-for="PatientId" class="form-select" asp-items="ViewBag.Patients">
+                    <option value="">Select</option>
+                </select>
+                <span asp-validation-for="PatientId" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="AppointmentType" class="form-label">Appointment Type</label>
+                <select asp-for="AppointmentType" class="form-select">
+                    <option value="">Select</option>
                     <option>Injury on Duty</option>
                     <option>Emergency</option>
                     <option>Chronic Management</option>
@@ -19,16 +30,19 @@
                 </select>
                 <span asp-validation-for="AppointmentType" class="text-danger"></span>
             </div>
+        </div>
 
-            <div>
-                <label asp-for="Date">Select Date</label>
-                <input asp-for="Date" type="date" class="form-control" />
+        <div class="row g-3 mt-3">
+            <div class="col-md-6">
+                <label asp-for="Date" class="form-label">Date</label>
+                <input asp-for="Date" class="form-control" type="date" />
                 <span asp-validation-for="Date" class="text-danger"></span>
             </div>
 
-            <div>
-                <label>Select Time</label>
-                <select asp-for="StartTime" class="form-control">
+            <div class="col-md-6">
+                <label asp-for="StartTime" class="form-label">Time Slot</label>
+                <select asp-for="StartTime" class="form-select">
+                    <option value="">Select</option>
                     <option value="09:00">09:00 – 09:15</option>
                     <option value="10:00">10:00 – 10:15</option>
                     <option value="11:00">11:00 – 11:15</option>
@@ -38,10 +52,12 @@
                 </select>
                 <span asp-validation-for="StartTime" class="text-danger"></span>
             </div>
+        </div>
 
-            <button type="submit">Book Appointment</button>
-        </form>
-    </div>
+        <div class="mt-4 text-end">
+            <button type="submit" class="btn btn-primary px-4">Book Appointment</button>
+        </div>
+    </form>
 </div>
 
 @section Scripts {

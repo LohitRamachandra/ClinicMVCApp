@@ -3,19 +3,49 @@
 
 <div class="container mt-4">
     <h4 class="mb-3">Appointment Confirmation</h4>
+
+    @if (TempData["ConfirmationSuccess"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["ConfirmationSuccess"]
+        </div>
+    }
+
     <p>Your appointment has been successfully booked. Here are the details:</p>
 
-    <div class="card">
+    <div class="card border-primary mb-3">
         <div class="card-body">
             <p><strong>Appointment Type:</strong> @Model.AppointmentType</p>
             <p><strong>Date:</strong> @Model.Date.Value.ToString("yyyy-MM-dd")</p>
-            <p><strongTime Slot:</strong> @Model.StartTime.Value.ToString(@"hh\:mm") – @Model.EndTime?.ToString(@"hh\:mm")</p>
-            <p><strong>Status:</strong> @Model.Status</p>
+            <p><strong>Time Slot:</strong> @Model.StartTime.Value.ToString(@"hh\:mm") – @Model.EndTime.Value.ToString(@"hh\:mm")</p>
+
+            @{
+                var status = Model.Status?.ToLower();
+                var badgeClass = status switch
+                {
+                    "confirmed" => "bg-success",
+                    "pending" => "bg-warning text-dark",
+                    "cancelled" => "bg-danger",
+                    _ => "bg-secondary"
+                };
+            }
+
+            <p><strong>Status:</strong> <span class="badge @badgeClass">@Model.Status</span></p>
         </div>
     </div>
+
+    @if (Model.Status != "Confirmed")
+    {
+        <form asp-action="ConfirmAppointment" method="post" class="text-end">
+            <input type="hidden" name="appointmentId" value="@Model.Id" />
+            <button type="submit" class="btn btn-success">✅ Confirm Appointment</button>
+        </form>
+    }
 
     <div class="mt-4 text-end">
         <a asp-action="Book" class="btn btn-secondary">Book Another</a>
         <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Go to Dashboard</a>
+        <button onclick="window.print()" class="btn btn-outline-info ms-2">🖨️ Print</button>
     </div>
 </div>
+

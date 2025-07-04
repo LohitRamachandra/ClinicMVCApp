@@ -1,0 +1,31 @@
+﻿@model IEnumerable<ClinicMVCApp.Models.Patient>
+
+<h2>Patient List</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Surname</th>
+            <th>ID Number</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var patient in Model)
+        {
+            <tr>
+                <td>@patient.FirstName</td>
+                <td>@patient.Surname</td>
+                <td>@patient.IDNumber</td>
+                <td>@patient.Email</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@patient.Id">View</a> |
+                    <a asp-action="Book" asp-route-id="@patient.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@patient.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

@@ -34,7 +34,7 @@ namespace ClinicMVCApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _repo.AddAsync(appointment);
+                await _appointmentRepo.AddAsync(appointment);
                 return RedirectToAction("Confirmation");
             }
             return View(appointment);

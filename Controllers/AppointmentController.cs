@@ -7,17 +7,21 @@ namespace ClinicMVCApp.Controllers
     public class AppointmentController : Controller
     {
         private readonly ILogger<AppointmentController> _logger;
-        private readonly IAppointmentRepository _repo;
+        private readonly IAppointmentRepository _appointmentRepo;
 
 
-        public AppointmentController(ILogger<AppointmentController> logger, IAppointmentRepository repo)
+        public AppointmentController(ILogger<AppointmentController> logger, IAppointmentRepository appointmentRepo)
         {
             _logger = logger;
-            _repo = repo;
+            _appointmentRepo = appointmentRepo;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> IndexAsync()
         {
-            return View();
+            var appointments = await _appointmentRepo.GetAllAsync();
+            return appointments != null ?
+                        View(appointments) :
+                        Problem("Patients data  is null.");
+           
         }
 
         public async Task<IActionResult> Book()

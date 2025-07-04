@@ -1,8 +1,13 @@
 ﻿@model IEnumerable<ClinicMVCApp.Models.Patient>
 
-<h2>Patient List</h2>
-<table class="table">
-    <thead>
+<div class="container mt-4">
+    <h4 class="mb-3">
+        Patient List
+    </h4>
+
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-light">
         <tr>
             <th>First Name</th>
             <th>Surname</th>
@@ -20,12 +25,16 @@
                 <td>@patient.IDNumber</td>
                 <td>@patient.Email</td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@patient.Id">View</a> |
-                    <a asp-action="Book" asp-route-id="@patient.Id">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@patient.Id">Delete</a>
+                        <a asp-action="Details" asp-route-id="@patient.Id" class="btn btn-sm btn-info">View</a> |
+                        <a asp-action="Edit" asp-route-id="@patient.Id" class="btn btn-sm btn-warning">Edit</a> |
+                        <a asp-action="Delete" asp-route-id="@patient.Id" class="btn btn-sm btn-danger">Delete</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
 
+    <div class="text-end mt-3">
+        <a asp-action="Create" class="btn btn-primary">🏥 Add Patient</a>
+    </div>
+</div>

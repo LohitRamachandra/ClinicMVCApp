@@ -1,5 +1,6 @@
 ﻿using ClinicMVCApp.Interfaces;
 using ClinicMVCApp.Models;
+using ClinicMVCApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -52,18 +53,44 @@ namespace ClinicMVCApp.Controllers
         {
             var patient = await _patientRepo.GetByIdAsync(id);
             if (patient == null) return NotFound();
-            return View(patient);
+
+            var vm = new PatientEditViewModel
+            {
+                PatientID = patient.Id,
+                FirstName = patient.FirstName,
+                Surname = patient.Surname,
+                IDNumber = patient.IDNumber,
+                Email = patient.Email,
+                //Phone = patient.Phone,
+                //DateOfBirth = patient.DateOfBirth,
+                Gender = patient.Gender
+            };
+
+            return View(vm);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Patient patient)
+        public async Task<IActionResult> Edit(PatientEditViewModel vm)
         {
-            if (!ModelState.IsValid) return View(patient);
+            if (!ModelState.IsValid) return View(vm);
 
+            var patient = await _patientRepo.GetByIdAsync(vm.PatientID);
+            if (patient == null) return NotFound();
+
+            // Update values
+            patient.FirstName = vm.FirstName;
+            patient.Surname = vm.Surname;
+            patient.IDNumber = vm.IDNumber;
+            patient.Email = vm.Email;
+            //patient.Phone = vm.Phone;
+            //patient.DateOfBirth = vm.DateOfBirth;
+            patient.Gender = vm.Gender;
             patient.DateModified = DateTime.Now;
+
             await _patientRepo.UpdateAsync(patient);
             return RedirectToAction("Index");
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Delete(int id)

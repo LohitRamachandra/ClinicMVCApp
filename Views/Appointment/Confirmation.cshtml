@@ -1,0 +1,21 @@
+﻿@model ClinicMVCApp.Models.Appointment
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<div class="container mt-4">
+    <h4 class="mb-3">Appointment Confirmation</h4>
+    <p>Your appointment has been successfully booked. Here are the details:</p>
+
+    <div class="card">
+        <div class="card-body">
+            <p><strong>Appointment Type:</strong> @Model.AppointmentType</p>
+            <p><strong>Date:</strong> @Model.Date.Value.ToString("yyyy-MM-dd")</p>
+            <p><strongTime Slot:</strong> @Model.StartTime.Value.ToString(@"hh\:mm") – @Model.EndTime?.ToString(@"hh\:mm")</p>
+            <p><strong>Status:</strong> @Model.Status</p>
+        </div>
+    </div>
+
+    <div class="mt-4 text-end">
+        <a asp-action="Book" class="btn btn-secondary">Book Another</a>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Go to Dashboard</a>
+    </div>
+</div>

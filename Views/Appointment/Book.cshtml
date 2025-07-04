@@ -1,0 +1,50 @@
+﻿@model Appointment
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<div class="card shadow-lg">
+    <div class="card-header">
+        <h2>Book an Appointment</h2>
+    </div>
+    <div class="card-body">
+        <form asp-action="Book">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div>
+                <label asp-for="AppointmentType"></label>
+                <select asp-for="AppointmentType" class="form-control">
+                    <option>Injury on Duty</option>
+                    <option>Emergency</option>
+                    <option>Chronic Management</option>
+                    <option>First Consultation</option>
+                    <option>Follow Up</option>
+                </select>
+                <span asp-validation-for="AppointmentType" class="text-danger"></span>
+            </div>
+
+            <div>
+                <label asp-for="Date">Select Date</label>
+                <input asp-for="Date" type="date" class="form-control" />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+
+            <div>
+                <label>Select Time</label>
+                <select asp-for="StartTime" class="form-control">
+                    <option value="09:00">09:00 – 09:15</option>
+                    <option value="10:00">10:00 – 10:15</option>
+                    <option value="11:00">11:00 – 11:15</option>
+                    <option value="11:15">11:15 – 11:30</option>
+                    <option value="11:30">11:30 – 12:00</option>
+                    <option value="12:00">12:00 – 12:15</option>
+                </select>
+                <span asp-validation-for="StartTime" class="text-danger"></span>
+            </div>
+
+            <button type="submit">Book Appointment</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

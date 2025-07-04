@@ -1,6 +1,7 @@
 using ClinicMVCApp.Data;
 using ClinicMVCApp.Interfaces;
 using ClinicMVCApp.Repositories;
+using ClinicMVCApp.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

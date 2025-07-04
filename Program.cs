@@ -13,7 +13,6 @@ builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
-
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
